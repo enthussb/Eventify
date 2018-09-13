@@ -11,10 +11,13 @@
     <string name="password">Password</string>
     <string name="log_in">LOG IN</string>
     <string name="btn_forgot_your_password">Forgot your password?</string>
-    <string name="username">Username</string>
     <string name="register">New User? Register</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="eventify">Eventify</string>
+    <string name="register_title">REGISTER</string>
+    <string name="class_field">Class</string>
+    <string name="username">Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="roll_number">Roll Number</string>
+    <string name="already_registered_login">Already Registered? Login</string>
 
 </resources>

@@ -1,7 +1,7 @@
 package com.app.eventify;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -15,6 +15,16 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         LoginFragment loginFragment = new LoginFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.OpeningContainer,loginFragment).commit();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.OpeningContainer,loginFragment,"LOGIN_FRAGMENT")
+                .commit();
+    }
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
