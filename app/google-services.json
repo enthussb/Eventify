@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "393424951265-smmejb7euc0lthnr1cq21e211eemnad8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.eventify",
+            "certificate_hash": "c5ce9759486176faf61bfe74cdb1fd0084ea1f35"
+          }
+        },
+        {
           "client_id": "393424951265-arlcq6vt158ochd57pueqmj311mclfu6.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393424951265-arlcq6vt158ochd57pueqmj311mclfu6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

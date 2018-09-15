@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".RegisterFragment"
-    tools:ignore="contentDescription">
+    tools:ignore="contentDescription"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-        <ImageView
-            android:background="@color/colorBlueLight"
-            android:layout_weight="3"
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp" />
-        <ImageView
-            android:layout_weight="5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/colorLight"
-            />
-    </LinearLayout>
+            android:layout_height="775dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:background="@color/colorBlueLight" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:background="@color/colorLight" />
+        </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutInput"
@@ -32,7 +41,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/material_card"
         android:elevation="4dp"
         android:orientation="vertical"
@@ -48,12 +57,14 @@
             android:textStyle="bold" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/reg_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="-5dp"
+            app:errorEnabled="true">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/reg_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/username"
@@ -62,12 +73,13 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/reg_emailWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            android:layout_marginBottom="-5dp"
+            app:errorEnabled="true">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/reg_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
@@ -76,15 +88,16 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/reg_passwordWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="-6dp"
             app:passwordToggleDrawable="@drawable/toggle_pass"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/colorAccent">
+            app:passwordToggleTint="@color/colorAccent"
+            app:errorEnabled="true">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/reg_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password"
@@ -95,7 +108,7 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="-8dp">
 
             <Spinner
                 android:id="@+id/spinner_class"
@@ -106,12 +119,14 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/reg_rollWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="-5dp"
+            app:errorEnabled="true">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/reg_rollNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/roll_number"
@@ -121,12 +136,12 @@
 
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/reg_phoneWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            app:errorEnabled="true">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/reg_phoneNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/mobile_number"
@@ -139,7 +154,7 @@
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/curved_button"
             android:text="@string/register_title"
             android:textColor="#FFF"
@@ -159,8 +174,18 @@
             android:textSize="14sp" />
 
     </LinearLayout>
+        <ProgressBar
+            android:id="@+id/progressBar_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:elevation="4dp"
+            android:visibility="gone" />
+
 </RelativeLayout>
 
+</ScrollView>
 
 
 
