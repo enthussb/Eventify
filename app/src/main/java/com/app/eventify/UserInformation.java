@@ -4,6 +4,20 @@ public class UserInformation
 {
     private String userName, emailId, className, rollNo, mobileNo;
 
+    public UserInformation()
+    {
+
+
+    }
+
+    public UserInformation(String userName, String emailId, String className, String rollNo, String mobileNo) {
+        this.userName = userName;
+        this.emailId = emailId;
+        this.className = className;
+        this.rollNo = rollNo;
+        this.mobileNo = mobileNo;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -44,17 +58,4 @@ public class UserInformation
         this.mobileNo = mobileNo;
     }
 
-    public UserInformation()
-    {
-
-
-    }
-
-    public UserInformation(String userName, String emailId, String className, String rollNo, String mobileNo) {
-        this.userName = userName;
-        this.emailId = emailId;
-        this.className = className;
-        this.rollNo = rollNo;
-        this.mobileNo = mobileNo;
-    }
 }

@@ -19,5 +19,8 @@
     <string name="mobile_number">Mobile Number</string>
     <string name="roll_number">Roll Number</string>
     <string name="already_registered_login">Already Registered? Login</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="sign_out">Sign Out</string>
 
 </resources>

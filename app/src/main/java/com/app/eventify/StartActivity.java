@@ -1,10 +1,15 @@
 package com.app.eventify;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class StartActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,4 +30,21 @@ public class StartActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null)
+        {
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        super.onBackPressed();
+//    }
 }

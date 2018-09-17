@@ -81,7 +81,7 @@ public class LoginFragment extends Fragment {
                               FirebaseUser user = mAuth.getCurrentUser();
                               Intent intent = new Intent(getActivity(), MainActivity.class);
                               startActivity(intent);
-//                              updateUI(user);
+                              getActivity().finish();
                         }
                         else
                         {
