@@ -26,10 +26,10 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
-    public FirebaseDatabase mFirebaseDatabase;
-    public FirebaseAuth mAuth;
-    public DatabaseReference myRef;
-    public  String userID, uname, email;
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
+    private String userID, uname, email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
+        final View headerView = navigationView.getHeaderView(0);
+        final TextView[] navEmail = {(TextView) headerView.findViewById(R.id.navheader_email)};
+        final TextView[] navUsername = {(TextView) headerView.findViewById(R.id.navheader_username)};
 
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -54,11 +56,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 uname = dataSnapshot.child(userID).child("userName").getValue(String.class);
                 email = dataSnapshot.child(userID).child("emailId").getValue(String.class);
+                navEmail[0] = (TextView) headerView.findViewById(R.id.navheader_email);
+                navUsername[0] = (TextView) headerView.findViewById(R.id.navheader_username);
+                navUsername[0].setText(uname);
+                navEmail[0].setText(email);
             }
 
             @Override
@@ -67,10 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        TextView navEmail = (TextView) headerView.findViewById(R.id.navheader_email);
-        TextView navUsername = (TextView) headerView.findViewById(R.id.navheader_username);
-        navUsername.setText(uname);
-        navEmail.setText(email);
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -115,6 +118,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_home) {
             // Handle the camera action
         } else if (id == R.id.nav_profile) {
+            ProfileFragment profileFragment = new ProfileFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_layout,profileFragment,"LOGIN_FRAGMENT")
+                    .commit();
 
         } else if (id == R.id.nav_sign_out) {
             FirebaseAuth.getInstance().signOut();
