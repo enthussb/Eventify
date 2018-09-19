@@ -2,7 +2,7 @@ package com.app.eventify;
 
 public class UserInformation
 {
-    private String userName, emailId, className, rollNo, mobileNo;
+    private String userName, emailId, className, rollNo, mobileNo, profilePic;
 
     public UserInformation()
     {
@@ -10,12 +10,23 @@ public class UserInformation
 
     }
 
-    public UserInformation(String userName, String emailId, String className, String rollNo, String mobileNo) {
+
+
+    public UserInformation(String userName, String emailId, String className, String rollNo, String mobileNo, String profilePic) {
         this.userName = userName;
         this.emailId = emailId;
         this.className = className;
         this.rollNo = rollNo;
         this.mobileNo = mobileNo;
+        this.profilePic = profilePic;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 
     public String getUserName() {

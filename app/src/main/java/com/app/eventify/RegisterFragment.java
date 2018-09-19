@@ -22,11 +22,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.eventify.Utils.DatabaseUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,10 +61,11 @@ public class RegisterFragment extends Fragment {
     {
         final String name = editTextName.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        final String className = classSpinner.getSelectedItem().toString();
+        final String className = classSpinner.getSelectedItem().toString().trim();
         final String email = editTextEmail.getText().toString().trim();
         final String rollNo = editTextRollNo.getText().toString().trim();
         final String mobileNo = editTextMobileNo.getText().toString().trim();
+        final String img = "https://firebasestorage.googleapis.com/v0/b/eventify-d6616.appspot.com/o/profile_background.png?alt=media&token=8abc2be1-644a-4985-816a-3fc35f8f2a99";
 
         if(name.isEmpty())
         {
@@ -125,6 +126,14 @@ public class RegisterFragment extends Fragment {
             Toast.makeText(getActivity(),"Please Check your Internet Connection...",Toast.LENGTH_SHORT).show();
             return;
         }
+        if(className.equals("Class"))
+        {
+            TextView errorText = (TextView)classSpinner.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);//just to highlight that this is an error
+            errorText.setText("Select one option");
+            return;
+        }
         progressBar.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -132,8 +141,8 @@ public class RegisterFragment extends Fragment {
             {
                 if(task.isSuccessful())
                 {
-                    UserInformation user = new UserInformation(name,email,className,rollNo,mobileNo);
-                    FirebaseDatabase.getInstance().getReference("Users")
+                    UserInformation user = new UserInformation(name,email,className,rollNo,mobileNo,img);
+                    DatabaseUtil.getDatabase().getReference("Users")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

@@ -22,5 +22,8 @@
     <string name="home">Home</string>
     <string name="profile">Profile</string>
     <string name="sign_out">Sign Out</string>
-    
+    <string name="class_name">Class</string>
+    <string name="roll_no">Roll No</string>
+    <string name="mobile">Mobile</string>
+
 </resources>

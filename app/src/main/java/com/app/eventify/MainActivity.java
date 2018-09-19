@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.app.eventify.Utils.DatabaseUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +32,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DatabaseReference myRef;
     private String userID, uname, email;
 
+    public interface OnDataReceiveCallback {
+        void onDataReceived(String username, String email);
+    }
+    private void retrieveFirebase(final OnDataReceiveCallback callback)
+    {
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = DatabaseUtil.getDatabase();
+        myRef = mFirebaseDatabase.getReference("Users");
+        FirebaseUser user = mAuth.getCurrentUser();
+        userID = user.getUid();
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                uname = dataSnapshot.child(userID).child("userName").getValue(String.class);
+                email = dataSnapshot.child(userID).child("emailId").getValue(String.class);
+                callback.onDataReceived(uname,email);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,34 +72,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        final View headerView = navigationView.getHeaderView(0);
-        final TextView[] navEmail = {(TextView) headerView.findViewById(R.id.navheader_email)};
-        final TextView[] navUsername = {(TextView) headerView.findViewById(R.id.navheader_username)};
+        View headerView = navigationView.getHeaderView(0);
+        final TextView navEmail = headerView.findViewById(R.id.navheader_email);
+        final TextView navUsername = headerView.findViewById(R.id.navheader_username);
 
-        mAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference("Users");
-        FirebaseUser user = mAuth.getCurrentUser();
-        userID = user.getUid();
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        retrieveFirebase(new OnDataReceiveCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                uname = dataSnapshot.child(userID).child("userName").getValue(String.class);
-                email = dataSnapshot.child(userID).child("emailId").getValue(String.class);
-                navEmail[0] = (TextView) headerView.findViewById(R.id.navheader_email);
-                navUsername[0] = (TextView) headerView.findViewById(R.id.navheader_username);
-                navUsername[0].setText(uname);
-                navEmail[0].setText(email);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onDataReceived(String username, String email) {
+                navUsername.setText(uname);
+                navEmail.setText(email);
             }
         });
-
-
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -120,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_profile) {
             ProfileFragment profileFragment = new ProfileFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_layout,profileFragment,"LOGIN_FRAGMENT")
+                    .add(R.id.main_layout,profileFragment,"PROFILE_FRAGMENT")
                     .commit();
 
         } else if (id == R.id.nav_sign_out) {
