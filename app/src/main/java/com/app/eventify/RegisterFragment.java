@@ -65,7 +65,7 @@ public class RegisterFragment extends Fragment {
         final String email = editTextEmail.getText().toString().trim();
         final String rollNo = editTextRollNo.getText().toString().trim();
         final String mobileNo = editTextMobileNo.getText().toString().trim();
-        final String img = "https://firebasestorage.googleapis.com/v0/b/eventify-d6616.appspot.com/o/profile_background.png?alt=media&token=8abc2be1-644a-4985-816a-3fc35f8f2a99";
+        final String img = "notSet";
 
         if(name.isEmpty())
         {
