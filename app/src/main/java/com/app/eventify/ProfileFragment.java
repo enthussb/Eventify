@@ -37,11 +37,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -205,8 +201,7 @@ public class ProfileFragment extends Fragment {
         RequestOptions options = new RequestOptions()
                 .placeholder(d)
                 .diskCacheStrategy(DiskCacheStrategy.DATA);
-
-        if(progressBar.getVisibility() != View.VISIBLE)
+        if(progressBar.getVisibility() == View.GONE)
             progressBar.setVisibility(View.VISIBLE);
         Glide.with(getContext())
                 .load(img)
@@ -226,7 +221,6 @@ public class ProfileFragment extends Fragment {
     }
     private void getUserProfile()
     {
-
         mFirebaseDatabase = DatabaseUtil.getDatabase();
         myRef = mFirebaseDatabase.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         imgRef = myRef.child("profilePic");
@@ -250,7 +244,8 @@ public class ProfileFragment extends Fragment {
                 mRollno.setText(rollNo);
                 mMobileNo.setText(mobileNo);
 
-                loadImg(userImg);
+                if(!userImg.equals("notSet"))
+                    loadImg(userImg);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -278,41 +273,21 @@ public class ProfileFragment extends Fragment {
 
             mStorageRef = FirebaseStorage.getInstance().getReference();
             final StorageReference imagePath = mStorageRef.child("Users").child(user_id).child("profile.jpg");
-            UploadTask uploadTask = imagePath.putBytes(mUploadBytes);
-
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            imagePath.putBytes(mUploadBytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-                {
-                    displayMessage(getContext(),"Profile pic Updated!");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                displayMessage(getContext(),"Could not upload photo");
-            }
-            });
-        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-                return imagePath.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    String downloadUri = task.getResult().toString();
-                    imgRef.setValue(downloadUri);
-                    loadImg(downloadUri);
-                } else {
-                    // Handle failures
-                }
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imagePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        //Log.d(TAG, "onSuccess: uri= "+ uri.toString());
+                        String downloadUri = uri.toString();
+                        imgRef.setValue(downloadUri);
+                        loadImg(downloadUri);
+                        displayMessage(getContext(),"Profile pic Updated!");
+                    }
+                });
             }
         });
-
 
     }
 
@@ -322,9 +297,6 @@ public class ProfileFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CAPTURE_IMAGE_REQUEST)
             {
-//                Bundle bundle = data.getExtras();
-//                final Bitmap bmp = (Bitmap) bundle.get("data");
-//                profilePic.setImageBitmap(bmp);
                 Bitmap myBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 uploadProfilePhoto(myBitmap);
                 }
@@ -353,7 +325,6 @@ public class ProfileFragment extends Fragment {
          @Override
          protected byte[] doInBackground(Uri... params)
          {
-             Log.d(TAG, "doInBackground: Started");
              if(mBitmap == null)
              {
                  try
@@ -388,7 +359,7 @@ public class ProfileFragment extends Fragment {
          int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()) );
          Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
          ByteArrayOutputStream stream = new ByteArrayOutputStream();
-         scaled.compress(Bitmap.CompressFormat.JPEG , 75, stream);
+         scaled.compress(Bitmap.CompressFormat.JPEG , 25, stream);
          return stream.toByteArray();
      }
 }
