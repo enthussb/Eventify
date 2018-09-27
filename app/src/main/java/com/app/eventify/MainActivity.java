@@ -3,7 +3,12 @@ package com.app.eventify;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,6 +36,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
     private String userID, uname, email;
+    private Fragment currentFragment;
+    private NewsFragment newsFragment = new NewsFragment();
+    private ProfileFragment profileFragment = new ProfileFragment();
+    private EventsFragment eventsFragment = new EventsFragment();
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_news:
+                    if(currentFragment != newsFragment)
+                    {
+                        replaceFragment(newsFragment, "NEWS_FRAGMENT");
+                        return true;
+                    }
+                case R.id.navigation_events:
+                    if(currentFragment != eventsFragment)
+                    {
+                        replaceFragment(eventsFragment, "EVENTS_FRAGMENT");
+                        return true;
+                    }
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    public TabLayout getTabLayout()
+    {
+        return (TabLayout)findViewById(R.id.tabs);
+    }
 
     public interface OnDataReceiveCallback {
         void onDataReceived(String username, String email);
@@ -57,6 +95,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
+
+    private void replaceFragment(Fragment fragment, String tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, fragment, tag)
+                .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+
+        currentFragment = fragment;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -75,6 +123,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View headerView = navigationView.getHeaderView(0);
         final TextView navEmail = headerView.findViewById(R.id.navheader_email);
         final TextView navUsername = headerView.findViewById(R.id.navheader_username);
+
+        navigationView.setCheckedItem(R.id.nav_home);
+        replaceFragment(newsFragment, "NEWS_FRAGMENT");
 
         retrieveFirebase(new OnDataReceiveCallback() {
             @Override
@@ -84,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         navigationView.setNavigationItemSelectedListener(this);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @Override
@@ -114,38 +168,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        // Handle bottom_navigation_menu view item clicks here.
+        switch(item.getItemId())
+        {
+            case R.id.nav_home:
+                if(currentFragment != newsFragment)
+                    replaceFragment(newsFragment,"NEWS_FRAGMENT");
+                break;
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_profile) {
-            ProfileFragment profileFragment = new ProfileFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_layout,profileFragment,"PROFILE_FRAGMENT")
-                    .commit();
+            case R.id.nav_profile:
+                if(currentFragment != profileFragment)
+                    replaceFragment(profileFragment,"PROFILE_FRAGMENT");
+                break;
 
-        } else if (id == R.id.nav_sign_out) {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(this, StartActivity.class);
-            startActivity(intent);
-            finish();
-        } else if (id == R.id.nav_manage) {
+            case  R.id.nav_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(this, StartActivity.class);
+                startActivity(intent);
+                finish();
+                break;
 
-        } else if (id == R.id.nav_share) {
+            case  R.id.nav_share:
+                break;
 
-        } else if (id == R.id.nav_send) {
+            case  R.id.nav_send:
+                break;
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

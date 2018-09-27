@@ -84,7 +84,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-
+        hideBottomNav();
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         scrollView = (ScrollView)view.findViewById(R.id.profileView);
         progressBar = view.findViewById(R.id.progressBar_profile_pic);
@@ -105,7 +105,16 @@ public class ProfileFragment extends Fragment {
         });
         return view;
     }
-
+    private void hideBottomNav()
+    {
+        View bottomNav = getActivity().getWindow().findViewById(R.id.bottom_navigation);// for fragment use getActivity().getWindow().getDecorView();
+        bottomNav.setVisibility(View.INVISIBLE);
+    }
+    private void showBottomNav()
+    {
+        View bottomNav = getActivity().getWindow().findViewById(R.id.bottom_navigation);// for fragment use getActivity().getWindow().getDecorView();
+        bottomNav.setVisibility(View.VISIBLE);
+    }
     private void displayMessage(Context context, String message)
     {
         Toast.makeText(context,message, Toast.LENGTH_LONG).show();
@@ -362,5 +371,11 @@ public class ProfileFragment extends Fragment {
          scaled.compress(Bitmap.CompressFormat.JPEG , 25, stream);
          return stream.toByteArray();
      }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        showBottomNav();
+    }
 }
 
