@@ -27,6 +27,7 @@ public class EventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
     }
 
     @Override
@@ -46,8 +47,6 @@ public class EventsFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager)
     {
-
-
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new OngoingEventsFragment(), "Ongoing");
         adapter.addFragment(new UpcomingEventsFragment(), "Upcoming");

@@ -31,6 +31,7 @@ public class LoginFragment extends Fragment {
     private TextInputEditText editTextEmail,editTextPassword;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
+    private Intent intent;
 
     public LoginFragment() {
 
@@ -79,9 +80,18 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
 
                               FirebaseUser user = mAuth.getCurrentUser();
-                              Intent intent = new Intent(getActivity(), MainActivity.class);
-                              startActivity(intent);
-                              getActivity().finish();
+                              if(user.getUid().equals("lSf5e78AhAgIWaTXLe2Lzv4RyDv1"))
+                              {
+                                  intent = new Intent(getActivity(), AdminActivity.class);
+                                  startActivity(intent);
+                                  getActivity().finish();
+                              }
+                              else
+                              {
+                                  intent = new Intent(getActivity(), MainActivity.class);
+                                  startActivity(intent);
+                                  getActivity().finish();
+                              }
                         }
                         else
                         {

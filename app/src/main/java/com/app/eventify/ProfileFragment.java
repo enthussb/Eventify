@@ -3,22 +3,23 @@ package com.app.eventify;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,9 +52,8 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class ProfileFragment extends Fragment {
@@ -64,18 +64,15 @@ public class ProfileFragment extends Fragment {
     private FloatingActionButton addImg;
     private static final int CAPTURE_IMAGE_REQUEST = 1, GALLERY = 2;
     private StorageReference mStorageRef;
-    private Uri selectedImageUri;
-    private Bitmap selectedBitmap;
+    private Uri selectedImageUri = null;
+    private Bitmap selectedBitmap = null;
     private TextView mName, mClass, mRollno, mEmail, mMobileNo;
     private ImageView profilePic;
     private String user_id;
     private ProgressBar progressBar;
     private  ScrollView scrollView;
-
-    File photoFile = null;
-    String mCurrentPhotoPath = "";
-    Uri photoURI = null;
     private byte[] mUploadBytes;
+    private int check;
 
     public ProfileFragment() {
 
@@ -86,6 +83,8 @@ public class ProfileFragment extends Fragment {
     {
         hideBottomNav();
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        AppBarLayout appBarLayout = getActivity().findViewById(R.id.appBarLayout);
+        appBarLayout.setExpanded(true,true);
         scrollView = (ScrollView)view.findViewById(R.id.profileView);
         progressBar = view.findViewById(R.id.progressBar_profile_pic);
         profilePic = view.findViewById(R.id.profile_pic);
@@ -119,48 +118,71 @@ public class ProfileFragment extends Fragment {
     {
         Toast.makeText(context,message, Toast.LENGTH_LONG).show();
     }
-
-
-    private File createImageFile() throws IOException
+    private boolean checkConnection()
     {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+        ConnectivityManager cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
+    private void loadImageFromStorage()
+    {
+        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+
+        File f = new File(directory.getAbsolutePath(), "profile.jpg");
+
+        Bitmap bm=((BitmapDrawable)profilePic.getDrawable()).getBitmap();
+        Drawable d = new BitmapDrawable(getResources(), bm);
+        RequestOptions options = new RequestOptions()
+                .placeholder(d)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE);
+
+        Glide.with(getContext())
+                .load(f)
+                .apply(options)
+                .into(profilePic);
+
+    }
+    private void createImageFile(Bitmap bitmapImage)
+    {
+        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath = new File(directory, "profile.jpg");
+
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream(mypath);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                fos.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        Log.d(TAG, "createImageFile: "+directory.getAbsolutePath());
+    }
+
 
     private void captureImage()
     {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-
-            try {
-
-                photoFile = createImageFile();
-                if (photoFile != null) {
-                    photoURI = FileProvider.getUriForFile(getContext(),
-                            "com.app.eventify.fileprovider",
-                            photoFile);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null)
                     startActivityForResult(takePictureIntent, CAPTURE_IMAGE_REQUEST);
-                }
-            } catch (Exception ex) {
-                displayMessage(getContext(),ex.getMessage());
-            }
-        }else
-        {
-            displayMessage(getContext(),"Null");
-        }
     }
 
 //    @Override
@@ -172,7 +194,6 @@ public class ProfileFragment extends Fragment {
 //            }
 //        }
 //    }
-
     private void selectImage()
     {
         final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
@@ -208,9 +229,7 @@ public class ProfileFragment extends Fragment {
         Bitmap bm=((BitmapDrawable)profilePic.getDrawable()).getBitmap();
         Drawable d = new BitmapDrawable(getResources(), bm);
         RequestOptions options = new RequestOptions()
-                .placeholder(d)
-                .diskCacheStrategy(DiskCacheStrategy.DATA);
-        if(progressBar.getVisibility() == View.GONE)
+                .placeholder(d);
             progressBar.setVisibility(View.VISIBLE);
         Glide.with(getContext())
                 .load(img)
@@ -233,7 +252,6 @@ public class ProfileFragment extends Fragment {
         mFirebaseDatabase = DatabaseUtil.getDatabase();
         myRef = mFirebaseDatabase.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         imgRef = myRef.child("profilePic");
-        imgRef.keepSynced(true);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -253,19 +271,22 @@ public class ProfileFragment extends Fragment {
                 mRollno.setText(rollNo);
                 mMobileNo.setText(mobileNo);
 
-                if(!userImg.equals("notSet"))
-                    loadImg(userImg);
+                if(!userImg.equals("notSet")) {
+                    if (!checkConnection())
+                    {
+                        loadImageFromStorage();
+                    } else
+                    {
+                        loadImg(userImg);
+                    }
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
-
     }
-
-
     private void uploadProfilePhoto(Uri uri)
     {
         BackgroundImageTask resize = new  BackgroundImageTask(null);
@@ -279,7 +300,6 @@ public class ProfileFragment extends Fragment {
     }
     private void executeUploadTask()
     {
-
             mStorageRef = FirebaseStorage.getInstance().getReference();
             final StorageReference imagePath = mStorageRef.child("Users").child(user_id).child("profile.jpg");
             imagePath.putBytes(mUploadBytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -291,8 +311,13 @@ public class ProfileFragment extends Fragment {
                         //Log.d(TAG, "onSuccess: uri= "+ uri.toString());
                         String downloadUri = uri.toString();
                         imgRef.setValue(downloadUri);
-                        loadImg(downloadUri);
-                        displayMessage(getContext(),"Profile pic Updated!");
+                        progressBar.setVisibility(View.GONE);
+                        if(check == 1)
+                            profilePic.setImageBitmap(selectedBitmap);
+                        else
+                            profilePic.setImageURI(selectedImageUri);
+                        Log.d(TAG, "onSuccess: Profile pic Updated to Database!");
+
                     }
                 });
             }
@@ -302,20 +327,25 @@ public class ProfileFragment extends Fragment {
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        check = requestCode;
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == CAPTURE_IMAGE_REQUEST)
+            if (requestCode == CAPTURE_IMAGE_REQUEST && data != null && data.getExtras() != null)
             {
-                Bitmap myBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                uploadProfilePhoto(myBitmap);
-                }
-                else if (requestCode == GALLERY) {
-                    selectedImageUri = data.getData();
-                    uploadProfilePhoto(selectedImageUri);
-                }
+                selectedBitmap = (Bitmap) data.getExtras().get("data");
+                createImageFile(selectedBitmap);
+                uploadProfilePhoto(selectedBitmap);
+                //profilePic.setImageBitmap(selectedBitmap);
+            }
+            else if (requestCode == GALLERY)
+            {
+                selectedImageUri = data.getData();
+                uploadProfilePhoto(selectedImageUri);
+                //profilePic.setImageURI(selectedImageUri);
             }
         }
-
+    }
      public class BackgroundImageTask extends AsyncTask<Uri,Integer,byte[]>
      {
          Bitmap mBitmap;
@@ -339,7 +369,9 @@ public class ProfileFragment extends Fragment {
                  try
                  {
                      mBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),params[0]);
-                 }catch (IOException e)
+                     createImageFile(mBitmap);
+                 }
+                 catch (IOException e)
                  {
                      Log.e(TAG, "doInBackground: IOException" + e.getMessage() );
                  }
@@ -357,15 +389,17 @@ public class ProfileFragment extends Fragment {
          }
 
          @Override
-         protected void onPostExecute(byte[] bytes) {
+         protected void onPostExecute(byte[] bytes)
+         {
              super.onPostExecute(bytes);
              mUploadBytes = bytes;
              executeUploadTask();
          }
      }
 
-     public byte[] getBytesFromBitmap(Bitmap bitmap) throws FileNotFoundException {
-         int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()) );
+     public byte[] getBytesFromBitmap(Bitmap bitmap) throws FileNotFoundException 
+     {
+         int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()));
          Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
          ByteArrayOutputStream stream = new ByteArrayOutputStream();
          scaled.compress(Bitmap.CompressFormat.JPEG , 25, stream);
@@ -373,7 +407,8 @@ public class ProfileFragment extends Fragment {
      }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
         showBottomNav();
     }

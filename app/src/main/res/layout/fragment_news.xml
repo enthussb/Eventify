@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewsFragment">
+    tools:context=".NewsFragment"
+    android:background="@color/colorWhite"
+    android:focusable="false"
+    android:focusableInTouchMode="false">
 
-    <TextView
-        android:gravity="center"
+        <android.support.v7.widget.RecyclerView
+        android:id="@+id/news_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="News" />
+        android:clipToPadding="false"
+        android:paddingBottom="?attr/actionBarSize" />
 
 </FrameLayout>

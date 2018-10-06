@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class StartActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,11 @@ public class StartActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null)
         {
-            Intent intent = new Intent(this,MainActivity.class);
+            if(mAuth.getUid().equals("lSf5e78AhAgIWaTXLe2Lzv4RyDv1"))
+                intent = new Intent(this,AdminActivity.class);
+            else
+                intent = new Intent(this,MainActivity.class);
+
             startActivity(intent);
             finish();
         }
