@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -98,6 +97,8 @@ public class AdminActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         toolbar.setTitle("Post News Article");
 
+
+
         newsPostimage = findViewById(R.id.news_post_img);
         newsPostdesc = findViewById(R.id.news_post_desc);
         newsPosttitle = findViewById(R.id.news_post_title);
@@ -109,10 +110,9 @@ public class AdminActivity extends AppCompatActivity
             public void onClick(View v) {
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setMinCropResultSize(256,256)
-                        .setMaxCropResultSize(512,512)
+                        .setMinCropResultSize(512,512)
                         .setAspectRatio(1,1)
-                        .setOutputCompressQuality(20)
+                        .setOutputCompressQuality(15)
                         .start(AdminActivity.this);
             }
         });
@@ -170,7 +170,7 @@ public class AdminActivity extends AppCompatActivity
                                                     postMap.put("thumbnail_url",downloadThumbUri);
                                                     postMap.put("title",postTitle);
                                                     postMap.put("description",desc);
-                                                    postMap.put("timestamp",ServerValue.TIMESTAMP);
+                                                    postMap.put("timestamp",System.currentTimeMillis()*-1);
                                                     firebaseDatabase.getReference().child("News").child(key).setValue(postMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task)

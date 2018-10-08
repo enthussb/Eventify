@@ -49,7 +49,7 @@ public class NewsDetailActivity extends AppCompatActivity {
             public boolean onPreDraw()
             {
                 mainImageView.getViewTreeObserver().removeOnPreDrawListener(this);
-                supportStartPostponedEnterTransition();
+                startPostponedEnterTransition();
                 return true;
             }
         });
@@ -65,7 +65,8 @@ public class NewsDetailActivity extends AppCompatActivity {
         RequestOptions options = new RequestOptions()
                 .placeholder(R.drawable.placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
-                .dontAnimate();
+                .dontAnimate()
+                .dontTransform();
 
         supportPostponeEnterTransition();
         Glide.with(this)
@@ -81,7 +82,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        supportStartPostponedEnterTransition();
+                        //supportStartPostponedEnterTransition();
                         return false;
                     }
                 })

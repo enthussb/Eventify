@@ -58,12 +58,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
+            switch (item.getItemId())
+            {
                 case R.id.navigation_news:
                     if(currentFragment != newsFragment)
                     {
-                        replaceFragment(newsFragment, "NEWS_FRAGMENT");
-                        return true;
+                        replaceFragment(newsFragment,"NEWS_FRAGMENT");
+                        navigationView.getMenu().getItem(0).setChecked(true);
                     }
                     else
                     {
@@ -75,16 +76,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case R.id.navigation_events:
                     if(currentFragment != eventsFragment)
                     {
-                        navigationView.getMenu().getItem(0).setChecked(false );
-                        replaceFragment(eventsFragment, "EVENTS_FRAGMENT");
-                        return true;
+                        navigationView.getMenu().getItem(0).setChecked(false);
+                        replaceFragment(eventsFragment,"NEWS_FRAGMENT");
                     }
                     return true;
             }
             return false;
         }
     };
-
 
     public TabLayout getTabLayout()
     {
@@ -151,8 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final ImageView navImg = headerView.findViewById(R.id.navheader_img);
 
         navigationView.setCheckedItem(R.id.nav_home);
-
-        replaceFragment(newsFragment, "NEWS_FRAGMENT");
+        replaceFragment(newsFragment,"NEWS_FRAGMENT");
 
         retrieveFirebase(new OnDataReceiveCallback() {
             @Override
@@ -184,12 +182,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                switch (clickedNavItem) {
+            public void onDrawerClosed(@NonNull View drawerView)
+            {
+                switch (clickedNavItem)
+                {
                     case R.id.nav_home:
                         if (currentFragment != newsFragment)
-                            replaceFragment(newsFragment, "NEWS_FRAGMENT");
-                        else {
+                            replaceFragment(newsFragment,"NEWS_FRAGMENT");
+                        else
+                        {
                             newsFragment.scrollTotop();
                             AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
                             appBarLayout.setExpanded(true, true);
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     case R.id.nav_profile:
                         if (currentFragment != profileFragment)
-                            replaceFragment(profileFragment, "PROFILE_FRAGMENT");
+                            replaceFragment(profileFragment,"PROFILE_FRAGMENT");
                         break;
                     case R.id.nav_sign_out:
                         FirebaseAuth.getInstance().signOut();
@@ -211,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case R.id.nav_send:
                         break;
                 }
+                clickedNavItem = 0;
             }
 
             @Override
@@ -219,11 +221,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
-
-
-
-
-
     @Override
     public void onBackPressed()
     {
@@ -241,8 +238,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              else
              {
                  replaceFragment(newsFragment,"NEWS_FRAGMENT");
+                 navigationView.getMenu().getItem(0).setChecked(true);
                  bottomNavigationView.setSelectedItemId(R.id.navigation_news);
-                 navigationView.setCheckedItem(R.id.nav_home);
              }
          }
     }
@@ -274,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch(item.getItemId())
         {
             case R.id.nav_home:
+                navigationView.getMenu().getItem(0).setChecked(true);
                 clickedNavItem = R.id.nav_home;
                 break;
 

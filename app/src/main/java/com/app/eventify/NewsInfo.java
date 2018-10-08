@@ -4,7 +4,6 @@ public class NewsInfo
 {
     public String description, image_url, title, thumbnail_url;
     public long timestamp;
-    private boolean showShimmer;
 
     public  NewsInfo()
     {
@@ -51,7 +50,6 @@ public class NewsInfo
         this.image_url = image_url;
     }
 
-
     public String getTitle() {
         return title;
     }
@@ -60,11 +58,4 @@ public class NewsInfo
         this.title = title;
     }
 
-    public boolean isShowShimmer() {
-        return showShimmer;
-    }
-
-    public void setShowShimmer(boolean showShimmer) {
-        this.showShimmer = showShimmer;
-    }
 }

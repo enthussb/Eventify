@@ -124,25 +124,23 @@ public class ProfileFragment extends Fragment {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-    private void loadImageFromStorage()
-    {
+    private void loadImageFromStorage() {
         ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
 
         File f = new File(directory.getAbsolutePath(), "profile.jpg");
+        Log.d(TAG, "loadImageFromStorageFile: "+f);
 
         Bitmap bm=((BitmapDrawable)profilePic.getDrawable()).getBitmap();
         Drawable d = new BitmapDrawable(getResources(), bm);
         RequestOptions options = new RequestOptions()
                 .placeholder(d)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE);
+                .diskCacheStrategy(DiskCacheStrategy.DATA);
 
         Glide.with(getContext())
                 .load(f)
                 .apply(options)
                 .into(profilePic);
-
     }
     private void createImageFile(Bitmap bitmapImage)
     {
@@ -156,7 +154,7 @@ public class ProfileFragment extends Fragment {
         try
         {
             fos = new FileOutputStream(mypath);
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG,100, fos);
         }
         catch (Exception e)
         {

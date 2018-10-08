@@ -63,7 +63,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull NewsRecyclerAdapter.ViewHolder holder, int position)
     {
-        setFadeAnimation(holder.itemView);
+        //setFadeAnimation(holder.itemView);
         NewsInfo newsItem = news_list.get(position);
         ViewCompat.setTransitionName(holder.newsThumbView,newsItem.title);
 
@@ -130,7 +130,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         public void setTimestamp(long timestamp)
         {
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
-            String ago = prettyTime.format(new Date(timestamp));
+            String ago = prettyTime.format(new Date(Math.abs(timestamp)));
             timestampView.setText(ago);
         }
     }
