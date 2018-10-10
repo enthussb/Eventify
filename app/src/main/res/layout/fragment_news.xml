@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NewsFragment"
-    android:background="@color/colorWhite"
     android:focusable="false"
     android:focusableInTouchMode="false">
 
@@ -31,4 +30,5 @@
         android:layout_marginBottom="?attr/actionBarSize"
         android:paddingBottom="10dp"
         android:visibility="visible" />
+
 </RelativeLayout>

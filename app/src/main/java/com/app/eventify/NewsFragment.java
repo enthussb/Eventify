@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
@@ -22,6 +23,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.app.eventify.Utils.DatabaseUtil;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -73,6 +78,7 @@ public class NewsFragment extends Fragment{
         flag = true;
         isScrolling = false;
         lastItem = null;
+        currentItems = 0;
     }
     public void scrollTotop()
     {
@@ -155,14 +161,11 @@ public class NewsFragment extends Fragment{
                             Log.d(TAG, "onDataChange: "+newsInfo.getTitle());
                             if(ctr == 1)
                                 FirstKey = newsInfo.getTimestamp();
-                            if(ctr <= TOTAL_ITEM_EACH_LOAD - 1)
-                            {
-                                Log.d(TAG, "onDataChange: inside");
                                 news_list.add(newsInfo);
-                            }
                             lastKey = newsInfo.getTimestamp();
                             ctr++;
                         }
+                        news_list.remove(news_list.size()-1);
                         Log.d(TAG, "onDataChange: ctr"+ctr);
                         newsRecyclerAdapter.notifyDataSetChanged();
                         ctr = ctr - 1;
@@ -261,7 +264,6 @@ public class NewsFragment extends Fragment{
                 currentItems = mLayoutManager.getChildCount();
                 totalItems = mLayoutManager.getItemCount();
                 scrollOutItems = mLayoutManager.findFirstVisibleItemPosition();
-
                 if(isScrolling && (currentItems + scrollOutItems == totalItems))
                 {
                     isScrolling = false;
@@ -270,6 +272,7 @@ public class NewsFragment extends Fragment{
                 }
             }
         });
+
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -280,21 +283,46 @@ public class NewsFragment extends Fragment{
         });
 
 
-        newsRecyclerAdapter.setOnItemClickListener(new NewsRecyclerAdapter.OnItemClickListener() {
+        newsRecyclerAdapter.setOnItemClickListener(new NewsRecyclerAdapter.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(int position, ImageView sharedImageView)
+            public void onItemClick(int position, ImageView sharedImageView, int state)
             {
-                Intent dataIntent = new Intent(getActivity(),NewsDetailActivity.class);
                 NewsInfo clickedItem = news_list.get(position);
-                dataIntent.putExtra(IMG_URL,clickedItem.getImage_url());
-                dataIntent.putExtra(TITLE,clickedItem.getTitle());
-                dataIntent.putExtra(DESC,clickedItem.getDescription());
-                dataIntent.putExtra(IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(sharedImageView));
+                if(state == 0)
+                {
+                    Intent dataIntent = new Intent(getActivity(), NewsDetailActivity.class);
+                    dataIntent.putExtra(IMG_URL, clickedItem.getImage_url());
+                    dataIntent.putExtra(TITLE, clickedItem.getTitle());
+                    dataIntent.putExtra(DESC, clickedItem.getDescription());
+                    dataIntent.putExtra(IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(sharedImageView));
 
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(), sharedImageView, ViewCompat.getTransitionName(sharedImageView));
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            getActivity(), sharedImageView, ViewCompat.getTransitionName(sharedImageView));
 
-                startActivity(dataIntent, options.toBundle());
+                    startActivity(dataIntent, options.toBundle());
+                }
+                else
+                {
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                    View mView = getLayoutInflater().inflate(R.layout.dialog_enlarge_layout, null);
+                    PhotoView photoView = mView.findViewById(R.id.photo_view);
+
+                    RequestOptions options = new RequestOptions()
+                            .placeholder(R.drawable.placeholder)
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .dontAnimate()
+                            .dontTransform();
+
+                    Glide.with(getContext())
+                            .load(clickedItem.getImage_url())
+                            .apply(options)
+                            .into(photoView);
+
+                    mBuilder.setView(photoView);
+                    AlertDialog mDialog = mBuilder.create();
+                    mDialog.show();
+                }
             }
         });
         news_recyclerView.setAdapter(newsRecyclerAdapter);

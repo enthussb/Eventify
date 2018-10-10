@@ -2,15 +2,16 @@ package com.app.eventify;
 
 public class NewsInfo
 {
-    public String description, image_url, title, thumbnail_url;
-    public long timestamp;
+    private String description, image_url, title, thumbnail_url;
+    private long timestamp;
 
     public  NewsInfo()
     {
 
     }
 
-    public NewsInfo(String description, String image_url, String title, String thumbnail_url, long timestamp) {
+    public NewsInfo(String description, String image_url, String title, String thumbnail_url, long timestamp)
+    {
         this.description = description;
         this.image_url = image_url;
         this.title = title;

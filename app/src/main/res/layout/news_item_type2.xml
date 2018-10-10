@@ -18,33 +18,21 @@
         android:focusableInTouchMode="false"
         android:padding="10dp">
 
-        <TextView
-            android:id="@+id/news_heading"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="8dp"
-            android:focusableInTouchMode="false"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@+id/news_thumb"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/news_thumb"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginTop="8dp"
+            android:id="@+id/news_bigImg"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="9dp"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:src="@color/colorLight"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:riv_border_color="@color/colorLight"
             app:riv_border_width="1dip"
@@ -53,14 +41,31 @@
             app:riv_oval="false" />
 
         <TextView
-            android:id="@+id/news_time"
+            android:id="@+id/news_heading_bigImg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:focusableInTouchMode="false"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/news_bigImg" />
+
+
+        <TextView
+            android:id="@+id/news_time_bigImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:focusableInTouchMode="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/news_heading_bigImg"
             tools:text="1 hour ago" />
 
     </android.support.constraint.ConstraintLayout>

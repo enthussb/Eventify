@@ -21,22 +21,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.ViewHolder>
+public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 
     private List<NewsInfo> news_list;
-    //private SwipeRefreshLayout swipeRefreshLayout;
+    private LayoutInflater layoutInflater;
     public Context context;
+    private final int textImageDesc = 0;
+    private final int textImage = 1;
     private OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener
     {
-        void onItemClick(int position, ImageView imageView);
+        void onItemClick(int position, ImageView imageView, int state);
     }
 
-
     public void setOnItemClickListener(OnItemClickListener onItemClickListener)
-     {
+    {
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -48,11 +49,24 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item_type1, parent, false);
+        RecyclerView.ViewHolder viewHolder = null;
         context = parent.getContext();
-        return new ViewHolder(view);
+        layoutInflater = LayoutInflater.from(context);
+
+        switch (viewType)
+        {
+            case textImageDesc:
+                View textImageDescVH = layoutInflater.inflate(R.layout.news_item_type1,parent,false);
+                viewHolder = new TextImageDesc(textImageDescVH);
+                break;
+            case textImage:
+                View textImageVH = layoutInflater.inflate(R.layout.news_item_type2,parent,false);
+                viewHolder = new TextImage(textImageVH);
+                break;
+        }
+        return viewHolder;
     }
     public void setFadeAnimation(View view)
     {
@@ -61,22 +75,39 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         view.startAnimation(anim);
     }
     @Override
-    public void onBindViewHolder(@NonNull NewsRecyclerAdapter.ViewHolder holder, int position)
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
     {
         //setFadeAnimation(holder.itemView);
         NewsInfo newsItem = news_list.get(position);
-        ViewCompat.setTransitionName(holder.newsThumbView,newsItem.title);
+        switch (holder.getItemViewType())
+        {
+            case textImageDesc:
+                TextImageDesc tid = (TextImageDesc)holder;
+                ViewCompat.setTransitionName(tid.newsThumbView,newsItem.getTitle());
 
-            holder.headView.setBackground(null);
-            holder.timestampView.setBackground(null);
-            String title_data = newsItem.getTitle();
-            holder.setHeading(title_data);
+                String title_data = newsItem.getTitle();
+                tid.setHeading(title_data);
 
-            String thumb_uri = newsItem.getThumbnail_url();
-            holder.setThumbnail(thumb_uri);
+                String thumb_uri = newsItem.getThumbnail_url();
+                tid.setThumbnail(thumb_uri);
 
-            long timestamp = newsItem.getTimestamp();
-            holder.setTimestamp(timestamp);
+                long timestamp = newsItem.getTimestamp();
+                tid.setTimestamp(timestamp);
+                break;
+
+            case textImage:
+                TextImage ti = (TextImage)holder;
+
+                String heading = newsItem.getTitle();
+                ti.setBigImgHeading(heading);
+
+                String img_uri = newsItem.getImage_url();
+                ti.setBigImg(img_uri);
+
+                long bigImgtimestamp = newsItem.getTimestamp();
+                ti.setBigImgtimestamp(bigImgtimestamp);
+                break;
+        }
     }
 
     @Override
@@ -85,14 +116,23 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         return news_list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
+    @Override
+    public int getItemViewType(int position)
     {
-        private View mView;
+        if(news_list.get(position).getDescription().equals("null"))
+            return textImage;
+        else
+            return textImageDesc;
+    }
+
+    public class TextImageDesc extends RecyclerView.ViewHolder
+    {
+        private View mView ;
         private TextView headView;
         private RoundedImageView newsThumbView;
         private TextView timestampView;
 
-        public ViewHolder(View itemView) {
+        public TextImageDesc(View itemView) {
             super(itemView);
             mView = itemView;
             newsThumbView = mView.findViewById(R.id.news_thumb);
@@ -107,7 +147,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
                         int position = getAdapterPosition();
                         if(position != RecyclerView.NO_POSITION)
                         {
-                            onItemClickListener.onItemClick(position, newsThumbView);
+                            onItemClickListener.onItemClick(position, newsThumbView,0);
                         }
                     }
                 }
@@ -132,6 +172,54 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
             String ago = prettyTime.format(new Date(Math.abs(timestamp)));
             timestampView.setText(ago);
+        }
+    }
+    public class TextImage extends RecyclerView.ViewHolder
+    {
+        private ImageView bigImgView;
+        private TextView bigImgHeadView;
+        private TextView bigImgtimestampView;
+        public TextImage(View itemView)
+        {
+            super(itemView);
+            bigImgView = itemView.findViewById(R.id.news_bigImg);
+            bigImgHeadView = itemView.findViewById(R.id.news_heading_bigImg);
+            bigImgtimestampView = itemView.findViewById(R.id.news_time_bigImg);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(onItemClickListener != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                        {
+                            onItemClickListener.onItemClick(position, bigImgView,1);
+                        }
+                    }
+                }
+            });
+        }
+
+        public void setBigImgHeading(String heading)
+        {
+            bigImgHeadView.setText(heading);
+        }
+        public void setBigImg(String downloadURI)
+        {
+
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.color.colorLight);
+            Glide.with(context)
+                    .load(downloadURI)
+                    .apply(options)
+                    .into(bigImgView);
+        }
+        public void setBigImgtimestamp(long timestamp)
+        {
+            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+            String ago = prettyTime.format(new Date(Math.abs(timestamp)));
+            bigImgtimestampView.setText(ago);
         }
     }
 }

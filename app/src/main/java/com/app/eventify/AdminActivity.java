@@ -57,6 +57,7 @@ public class AdminActivity extends AppCompatActivity
 
    private Bitmap compressedImgFile;
    private byte[] mUploadBytes;
+   private String desc;
 
 
     public byte[] getBytesFromBitmap(Bitmap bitmap) throws FileNotFoundException
@@ -111,8 +112,7 @@ public class AdminActivity extends AppCompatActivity
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setMinCropResultSize(512,512)
-                        .setAspectRatio(1,1)
-                        .setOutputCompressQuality(15)
+                        .setOutputCompressQuality(25)
                         .start(AdminActivity.this);
             }
         });
@@ -123,10 +123,13 @@ public class AdminActivity extends AppCompatActivity
             {
 
                 final String postTitle = newsPosttitle.getText().toString();
-                final String desc = newsPostdesc.getText().toString();
+                desc = newsPostdesc.getText().toString();
                 final Map<String,Object> postMap = new HashMap<>();
 
-                if(!TextUtils.isEmpty(postTitle) && !TextUtils.isEmpty(desc) && postImageUri != null)
+                if(TextUtils.isEmpty(desc))
+                   desc = "null";
+
+                if(!TextUtils.isEmpty(postTitle) && postImageUri != null)
                 {
                     progressBar.setVisibility(View.VISIBLE);
                     firebaseDatabase = DatabaseUtil.getDatabase();
@@ -149,7 +152,7 @@ public class AdminActivity extends AppCompatActivity
                                         compressedImgFile = new Compressor(AdminActivity.this)
                                                 .setMaxHeight(200)
                                                 .setMaxWidth(200)
-                                                .setQuality(20)
+                                                .setQuality(15)
                                                 .compressToBitmap(imgFile);
                                         mUploadBytes = getBytesFromBitmap(compressedImgFile);
                                     }
