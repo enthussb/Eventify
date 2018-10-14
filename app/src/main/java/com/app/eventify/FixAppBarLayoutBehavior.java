@@ -1,4 +1,4 @@
-package com.app.eventify.utils;
+package com.app.eventify;
 
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
