@@ -58,7 +58,6 @@ public class NewsFragment extends Fragment{
     private boolean isScrolling = false;
     private int currentItems, totalItems, scrollOutItems;
     private Long lastKey = null;
-    private Long FirstKey = null;
     private long total = 0;
     private long newTotal = 0;
     private int ctr = 1;
@@ -159,9 +158,7 @@ public class NewsFragment extends Fragment{
                         {
                             NewsInfo newsInfo = data.getValue(NewsInfo.class);
                             Log.d(TAG, "onDataChange: "+newsInfo.getTitle());
-                            if(ctr == 1)
-                                FirstKey = newsInfo.getTimestamp();
-                                news_list.add(newsInfo);
+                            news_list.add(newsInfo);
                             lastKey = newsInfo.getTimestamp();
                             ctr++;
                         }
@@ -311,7 +308,6 @@ public class NewsFragment extends Fragment{
                     RequestOptions options = new RequestOptions()
                             .placeholder(R.drawable.placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
-                            .dontAnimate()
                             .dontTransform();
 
                     Glide.with(getContext())

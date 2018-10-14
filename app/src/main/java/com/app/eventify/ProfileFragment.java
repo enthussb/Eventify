@@ -314,7 +314,8 @@ public class ProfileFragment extends Fragment {
                             profilePic.setImageBitmap(selectedBitmap);
                         else
                             profilePic.setImageURI(selectedImageUri);
-                        Log.d(TAG, "onSuccess: Profile pic Updated to Database!");
+                        //Log.d(TAG, "onSuccess: Profile pic Updated to Database!");
+                        displayMessage(getContext(),"Saved");
 
                     }
                 });

@@ -18,30 +18,30 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
-import static com.app.eventify.NewsFragment.DESC;
-import static com.app.eventify.NewsFragment.IMG_URL;
-import static com.app.eventify.NewsFragment.TITLE;
+import static com.app.eventify.OngoingEventsFragment.DESC_EVENT;
+import static com.app.eventify.OngoingEventsFragment.IMG_URL_EVENT;
+import static com.app.eventify.OngoingEventsFragment.TITLE_EVENT;
 
-
-public class NewsDetailActivity extends AppCompatActivity {
-
+public class EventDetailActivity extends AppCompatActivity
+{
     private ImageView mainImageView;
     private TextView titleTextView, bodyTextView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_detail);
+        setContentView(R.layout.activity_event_detail);
 
         Bundle extras = getIntent().getExtras();
-        Toolbar toolbar = findViewById(R.id.toolbar1);
+        Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mainImageView = findViewById(R.id.main_img);
-        titleTextView = findViewById(R.id.text_title);
-        bodyTextView = findViewById(R.id.text_body);
+        mainImageView = findViewById(R.id.main_img_event);
+        titleTextView = findViewById(R.id.text_title_event);
+        bodyTextView = findViewById(R.id.text_body_event);
 
 
         mainImageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -55,10 +55,10 @@ public class NewsDetailActivity extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        String imgUrl = intent.getStringExtra(IMG_URL);
-        String title = intent.getStringExtra(TITLE);
-        String desc = intent.getStringExtra(DESC);
-        String imageTransitionName = extras.getString(NewsFragment.IMAGE_TRANSITION_NAME);
+        String imgUrl = intent.getStringExtra(IMG_URL_EVENT);
+        String title = intent.getStringExtra(TITLE_EVENT);
+        String desc = intent.getStringExtra(DESC_EVENT);
+        String imageTransitionName = extras.getString(OngoingEventsFragment.IMAGE_TRANSITION_NAME_EVENT);
         mainImageView.setTransitionName(imageTransitionName);
 
 

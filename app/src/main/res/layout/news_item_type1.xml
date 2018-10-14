@@ -41,7 +41,7 @@
             android:layout_marginBottom="9dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:src="@color/colorLight"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

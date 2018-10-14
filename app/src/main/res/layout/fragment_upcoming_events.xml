@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".UpcomingEventsFragment">
 
-    <TextView
-        android:gravity="center"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/upcomingEvent_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Upcoming...." />
+        android:clipToPadding="false"
+        android:paddingBottom="?attr/actionBarSize" />
 
 </FrameLayout>
