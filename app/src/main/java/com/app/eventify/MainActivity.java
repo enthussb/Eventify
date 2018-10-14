@@ -26,7 +26,10 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app.eventify.Utils.DatabaseUtil;
+import com.app.eventify.fragments.EventsFragment;
+import com.app.eventify.fragments.NewsFragment;
+import com.app.eventify.fragments.ProfileFragment;
+import com.app.eventify.utils.DatabaseUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private Context context;
     private int clickedNavItem = 0;
+    private String startLoad = null;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -129,12 +133,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        startLoad = getIntent().getStringExtra("login");
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -150,6 +157,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final ImageView navImg = headerView.findViewById(R.id.navheader_img);
 
         navigationView.setCheckedItem(R.id.nav_home);
+
+        if(startLoad !=null && startLoad.equals("Yload"))
+        {
+            Bundle bundle = new Bundle();
+            bundle.putString("params",startLoad);
+            newsFragment.setArguments(bundle);
+        }
         replaceFragment(newsFragment,"NEWS_FRAGMENT");
 
         retrieveFirebase(new OnDataReceiveCallback() {
@@ -206,7 +220,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FirebaseAuth.getInstance().signOut();
                         startActivity(intent);
                         finish();
+                        break;
                     case R.id.nav_share:
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("text/plain");
+                        String shareStr = "App Share Testing";
+                        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Coming Soon");
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareStr);
+                        startActivity(Intent.createChooser(shareIntent, "Share via"));
                         break;
 
                     case R.id.nav_send:
@@ -284,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case  R.id.nav_share:
+                clickedNavItem = R.id.nav_share;
                 break;
 
             case  R.id.nav_send:

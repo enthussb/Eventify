@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.eventify.fragments.OngoingEventsFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -18,9 +19,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
-import static com.app.eventify.OngoingEventsFragment.DESC_EVENT;
-import static com.app.eventify.OngoingEventsFragment.IMG_URL_EVENT;
-import static com.app.eventify.OngoingEventsFragment.TITLE_EVENT;
+import static com.app.eventify.fragments.OngoingEventsFragment.DESC_EVENT;
+import static com.app.eventify.fragments.OngoingEventsFragment.IMG_URL_EVENT;
+import static com.app.eventify.fragments.OngoingEventsFragment.TITLE_EVENT;
 
 public class EventDetailActivity extends AppCompatActivity
 {

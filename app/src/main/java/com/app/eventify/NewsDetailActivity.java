@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.eventify.fragments.NewsFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -18,9 +19,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
-import static com.app.eventify.NewsFragment.DESC;
-import static com.app.eventify.NewsFragment.IMG_URL;
-import static com.app.eventify.NewsFragment.TITLE;
+import static com.app.eventify.fragments.NewsFragment.DESC;
+import static com.app.eventify.fragments.NewsFragment.IMG_URL;
+import static com.app.eventify.fragments.NewsFragment.TITLE;
 
 
 public class NewsDetailActivity extends AppCompatActivity {

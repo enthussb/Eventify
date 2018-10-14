@@ -41,7 +41,7 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:layout_collapseMode="pin"
-                app:title="@string/title_activity_news_detail" />
+                app:title="Event Details" />
 
 
             <android.support.v4.widget.NestedScrollView
