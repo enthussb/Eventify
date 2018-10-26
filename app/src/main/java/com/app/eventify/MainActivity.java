@@ -230,8 +230,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(Intent.createChooser(shareIntent, "Share via"));
                         break;
 
-                    case R.id.nav_send:
-                        break;
+//                    case R.id.nav_send:
+//                        break;
                 }
                 clickedNavItem = 0;
             }
@@ -307,10 +307,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case  R.id.nav_share:
                 clickedNavItem = R.id.nav_share;
                 break;
-
-            case  R.id.nav_send:
-                break;
-
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
