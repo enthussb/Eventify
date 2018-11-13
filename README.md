@@ -1,2 +1,2 @@
 # Eventify
-Android app to view all latest news, notices and events information of PICT at one place.
+Android app to view all the latest news, notices and events information of PICT College at one place.
